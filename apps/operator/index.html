@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>FootLabOS — Operator</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <div class="brand"><div class="mark">FL</div><div><strong>FootLabOS</strong><span>Operator</span></div></div>
+      <nav id="nav" aria-label="Primary">
+        <button class="nav-item active" data-view="today">Today <span>8</span></button>
+        <button class="nav-item" data-view="review">Needs Review <span>3</span></button>
+        <button class="nav-item" data-view="clients">Clients</button>
+        <button class="nav-item" data-view="flights">Flights</button>
+        <button class="nav-item" data-view="manufacturing">Manufacturing <span>4</span></button>
+        <button class="nav-item" data-view="edge">Edge</button>
+      </nav>
+      <div class="rail-foot"><div class="edge-dot"></div><div><strong>EDGE-001</strong><span>Local · Healthy</span></div></div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div><p class="eyebrow">FRIDAY · OPERATIONS</p><h1 id="title">Today</h1><p class="subtitle" id="subtitle"></p></div>
+        <div class="top-actions"><button class="quiet">Search</button><button class="primary">+ Enroll client</button></div>
+      </header>
+      <section id="view"></section>
+    </main>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
