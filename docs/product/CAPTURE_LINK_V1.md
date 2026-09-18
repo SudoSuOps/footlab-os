@@ -4,6 +4,14 @@
 
 Give a client a low-friction path from an SMS notification to a scoped FootLabOS capture session without a standing password or app install.
 
+## Production URL shape
+
+```text
+https://check.footlabos.com/c/<opaque-token>
+```
+
+The production Caddy ingress already routes `/c/*` and `/api/v1/capture/*` to the existing FootOS Capture service on `127.0.0.1:8000`.
+
 ## Link lifecycle
 
 ```text
@@ -49,18 +57,12 @@ Initial V1 default:
 
 The capture protocol must eventually be configurable by client and monitoring plan.
 
+## BlockZero baseline
+
+The existing production capture service has already demonstrated the four-photo path through `check.footlabos.com` into local/NAS-backed storage. The secure-link layer should wrap that proven ingestion path rather than create a parallel media pipeline.
+
 ## Demo boundary
 
 The repository demo previews image files locally in the browser and submits only metadata. It does **not** upload or persist image bytes.
 
-The production ingestion path must add:
-
-- authenticated/scoped media upload
-- encrypted storage
-- MIME/signature validation
-- size/resolution limits
-- EXIF handling policy
-- malware/content handling policy
-- idempotency
-- server-side quality checks
-- audit linkage between media objects and capture events
+The production service is the source of truth for actual media ingestion and storage.
