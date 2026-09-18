@@ -4,6 +4,7 @@
   "private": true,
   "description": "Local-first operating system for longitudinal at-risk foot monitoring and personalized insert manufacturing.",
   "scripts": {
-    "check": "node scripts/check-foundation.mjs"
+    "check": "node scripts/check-foundation.mjs",
+    "demo:capture": "node scripts/demo-capture-server.mjs"
   }
 }
