@@ -1,0 +1,9 @@
+{
+  "name": "footlab-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first operating system for longitudinal at-risk foot monitoring and personalized insert manufacturing.",
+  "scripts": {
+    "check": "node scripts/check-foundation.mjs"
+  }
+}
