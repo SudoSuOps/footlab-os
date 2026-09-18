@@ -13,6 +13,12 @@ export type FootSide = "left" | "right";
 
 export type FlightEventType =
   | "capture_requested"
+  | "sms_queued"
+  | "sms_sent"
+  | "sms_delivered"
+  | "sms_failed"
+  | "capture_link_opened"
+  | "capture_started"
   | "capture_completed"
   | "observation_created"
   | "change_flagged"
