@@ -20,6 +20,8 @@ export type FlightEventType =
   | "capture_link_opened"
   | "capture_started"
   | "capture_completed"
+  | "capture_ready_for_ingest"
+  | "capture_ingested"
   | "observation_created"
   | "change_flagged"
   | "operator_reviewed"
