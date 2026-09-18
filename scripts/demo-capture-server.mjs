@@ -90,7 +90,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "GET" && url.pathname === "/client/app.js") return serveFile(res, join(CLIENT_DIR, "app.js"));
     if (req.method === "GET" && url.pathname === "/client/styles.css") return serveFile(res, join(CLIENT_DIR, "styles.css"));
-    if (req.method === "GET" && url.pathname.startsWith("/s/")) {
+    if (req.method === "GET" && url.pathname.startsWith("/c/")) {
       const token = url.pathname.slice(3);
       const record = resolve(token);
       if (record) events.push(event(record.clientId, "capture_link_opened", { requestId: record.requestId }));
@@ -152,7 +152,7 @@ server.listen(PORT, () => {
   console.log("");
   console.log("FootLabOS capture demo");
   console.log("----------------------");
-  console.log(`Open: http://localhost:${PORT}/s/${token}`);
+  console.log(`Open: http://localhost:${PORT}/c/${token}`);
   console.log(`Events: http://localhost:${PORT}/api/demo/events`);
   console.log("");
   console.log("For a phone on the same LAN, replace localhost with this machine's LAN IP.");
