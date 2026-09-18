@@ -1,4 +1,4 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { createReadStream, existsSync } from "node:fs";
 import { extname, join } from "node:path";
 import { createServer } from "node:http";
@@ -24,7 +24,7 @@ function issueDemoLink() {
   const rawToken = randomBytes(32).toString("base64url");
   const now = new Date();
   const record = {
-    requestId: crypto.randomUUID(),
+    requestId: randomUUID(),
     clientId: "F-DEMO-001",
     tokenHash: hashToken(rawToken),
     issuedAt: now.toISOString(),
@@ -38,7 +38,7 @@ function issueDemoLink() {
 
 function event(clientId, type, payload = {}) {
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     clientId,
     occurredAt: new Date().toISOString(),
     type,
@@ -155,5 +155,6 @@ server.listen(PORT, () => {
   console.log(`Open: http://localhost:${PORT}/s/${token}`);
   console.log(`Events: http://localhost:${PORT}/api/demo/events`);
   console.log("");
+  console.log("For a phone on the same LAN, replace localhost with this machine's LAN IP.");
   console.log("Demo note: selected image bytes remain in the browser; only metadata is submitted.");
 });
