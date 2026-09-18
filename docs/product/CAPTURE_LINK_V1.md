@@ -48,18 +48,41 @@ SMS carriers, security software, and link-preview systems may request URLs befor
 
 ## Required capture set
 
-Initial V1 default:
+BlockZero established the production V1 contract:
 
-1. left plantar
-2. left dorsal
-3. right plantar
-4. right dorsal
+1. right plantar
+2. left plantar
+3. right targeted
+4. left targeted
 
-The capture protocol must eventually be configurable by client and monitoring plan.
+The capture protocol should later become configurable by client and monitoring plan without breaking event or manifest compatibility.
 
 ## BlockZero baseline
 
-The existing production capture service has already demonstrated the four-photo path through `check.footlabos.com` into local/NAS-backed storage. The secure-link layer should wrap that proven ingestion path rather than create a parallel media pipeline.
+The existing production capture service demonstrated the four-photo path through `check.footlabos.com` into the canonical event package.
+
+Observed package:
+
+```text
+PHE-F001-000001/
+  manifest.json
+  originals/
+    01-right-plantar.jpg
+    02-left-plantar.jpg
+    03-right-targeted.jpg
+    04-left-targeted.jpg
+```
+
+The manifest already records, per image:
+
+- slot
+- stored filename
+- detected MIME type
+- size in bytes
+- SHA-256 digest
+- received timestamp
+
+That proven ingestion path is the production source of truth. The secure-link layer wraps it rather than introducing a second media pipeline.
 
 ## Demo boundary
 
