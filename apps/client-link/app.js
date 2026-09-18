@@ -2,10 +2,10 @@ const app = document.querySelector("#app");
 const token = location.pathname.split("/").filter(Boolean).at(-1);
 
 const views = [
-  ["left-plantar", "Left foot · bottom", "Photograph the full bottom of the left foot."],
-  ["left-dorsal", "Left foot · top", "Photograph the full top of the left foot."],
   ["right-plantar", "Right foot · bottom", "Photograph the full bottom of the right foot."],
-  ["right-dorsal", "Right foot · top", "Photograph the full top of the right foot."],
+  ["left-plantar", "Left foot · bottom", "Photograph the full bottom of the left foot."],
+  ["right-targeted", "Right foot · targeted", "Photograph the area your FootLab plan asks us to monitor."],
+  ["left-targeted", "Left foot · targeted", "Photograph the area your FootLab plan asks us to monitor."],
 ];
 
 const state = { files: new Map() };
