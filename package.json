@@ -5,6 +5,7 @@
   "description": "Local-first operating system for longitudinal at-risk foot monitoring and personalized insert manufacturing.",
   "scripts": {
     "check": "node scripts/check-foundation.mjs",
-    "demo:capture": "node scripts/demo-capture-server.mjs"
+    "demo:capture": "node scripts/demo-capture-server.mjs",
+    "test:dataset": "node --experimental-strip-types --test packages/dataset-engine/test/*.test.mjs"
   }
 }
