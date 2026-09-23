@@ -20,6 +20,10 @@ import {
   DatasetEventValidationError,
   validateDatasetEvent,
 } from "../src/validator.ts";
+import {
+  DatasetStoreError,
+  InMemoryDatasetEventStore,
+} from "../src/store.ts";
 
 // ---------- fixture helpers ----------
 
@@ -162,13 +166,15 @@ test("index: src/index.ts imports successfully and exposes the public API surfac
     "DatasetEventValidationError",
     "evaluateConsent",
     "ConsentEvaluationError",
+    "InMemoryDatasetEventStore",
+    "DatasetStoreError",
   ]) {
     assert.ok(
       exportedName in index,
       `src/index.ts must export ${exportedName}`,
     );
   }
-  // The eight public surface entries resolve to the exact implementations under test.
+  // The ten public surface entries resolve to the exact implementations under test.
   assert.equal(index.stableStringify, stableStringify);
   assert.equal(index.sha256Canonical, sha256Canonical);
   assert.equal(index.computeDatasetEventHash, computeDatasetEventHash);
@@ -177,10 +183,22 @@ test("index: src/index.ts imports successfully and exposes the public API surfac
   assert.equal(index.DatasetEventValidationError, DatasetEventValidationError);
   assert.equal(index.evaluateConsent, evaluateConsent);
   assert.equal(index.ConsentEvaluationError, ConsentEvaluationError);
+  assert.equal(index.InMemoryDatasetEventStore, InMemoryDatasetEventStore);
+  assert.equal(index.DatasetStoreError, DatasetStoreError);
   // ConsentRequest is type-only and has no runtime representation.
   assert.ok(
     !("ConsentRequest" in index),
     "src/index.ts must not expose a runtime ConsentRequest export",
+  );
+  // DatasetStoreErrorCode and DatasetCaseHead are type-only and have no
+  // runtime representation.
+  assert.ok(
+    !("DatasetStoreErrorCode" in index),
+    "src/index.ts must not expose a runtime DatasetStoreErrorCode export",
+  );
+  assert.ok(
+    !("DatasetCaseHead" in index),
+    "src/index.ts must not expose a runtime DatasetCaseHead export",
   );
 });
 
