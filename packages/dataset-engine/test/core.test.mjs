@@ -13,6 +13,10 @@ import {
   validateRelativeUri,
 } from "../src/artifact.ts";
 import {
+  ConsentEvaluationError,
+  evaluateConsent,
+} from "../src/consent.ts";
+import {
   DatasetEventValidationError,
   validateDatasetEvent,
 } from "../src/validator.ts";
@@ -156,19 +160,28 @@ test("index: src/index.ts imports successfully and exposes the public API surfac
     "validateArtifactReference",
     "validateDatasetEvent",
     "DatasetEventValidationError",
+    "evaluateConsent",
+    "ConsentEvaluationError",
   ]) {
     assert.ok(
       exportedName in index,
       `src/index.ts must export ${exportedName}`,
     );
   }
-  // The six public surface entries resolve to the exact implementations under test.
+  // The eight public surface entries resolve to the exact implementations under test.
   assert.equal(index.stableStringify, stableStringify);
   assert.equal(index.sha256Canonical, sha256Canonical);
   assert.equal(index.computeDatasetEventHash, computeDatasetEventHash);
   assert.equal(index.validateArtifactReference, validateArtifactReference);
   assert.equal(index.validateDatasetEvent, validateDatasetEvent);
   assert.equal(index.DatasetEventValidationError, DatasetEventValidationError);
+  assert.equal(index.evaluateConsent, evaluateConsent);
+  assert.equal(index.ConsentEvaluationError, ConsentEvaluationError);
+  // ConsentRequest is type-only and has no runtime representation.
+  assert.ok(
+    !("ConsentRequest" in index),
+    "src/index.ts must not expose a runtime ConsentRequest export",
+  );
 });
 
 // ---------- canonical serialization ----------
