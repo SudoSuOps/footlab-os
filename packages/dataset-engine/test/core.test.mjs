@@ -24,6 +24,10 @@ import {
   DatasetStoreError,
   InMemoryDatasetEventStore,
 } from "../src/store.ts";
+import {
+  buildDatasetExport,
+  DatasetExportError,
+} from "../src/export.ts";
 
 // ---------- fixture helpers ----------
 
@@ -168,6 +172,8 @@ test("index: src/index.ts imports successfully and exposes the public API surfac
     "ConsentEvaluationError",
     "InMemoryDatasetEventStore",
     "DatasetStoreError",
+    "buildDatasetExport",
+    "DatasetExportError",
   ]) {
     assert.ok(
       exportedName in index,
@@ -185,6 +191,8 @@ test("index: src/index.ts imports successfully and exposes the public API surfac
   assert.equal(index.ConsentEvaluationError, ConsentEvaluationError);
   assert.equal(index.InMemoryDatasetEventStore, InMemoryDatasetEventStore);
   assert.equal(index.DatasetStoreError, DatasetStoreError);
+  assert.equal(index.buildDatasetExport, buildDatasetExport);
+  assert.equal(index.DatasetExportError, DatasetExportError);
   // ConsentRequest is type-only and has no runtime representation.
   assert.ok(
     !("ConsentRequest" in index),

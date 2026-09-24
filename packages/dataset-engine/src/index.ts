@@ -4,3 +4,4 @@ export * from "./artifact.ts";
 export * from "./consent.ts";
 export * from "./store.ts";
 export * from "./validator.ts";
+export * from "./export.ts";
