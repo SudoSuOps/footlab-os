@@ -6,6 +6,7 @@
   "scripts": {
     "check": "node scripts/check-foundation.mjs",
     "demo:capture": "node scripts/demo-capture-server.mjs",
+    "demo:dataset": "node --experimental-strip-types scripts/demo-dataset.mjs",
     "test:dataset": "node --experimental-strip-types --test packages/dataset-engine/test/*.test.mjs"
   }
 }
