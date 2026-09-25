@@ -3,13 +3,16 @@
 // All identifiers are fictional (TEST-/SYN- prefixed) and all payloads are
 // harmless invented values. dataClassification is "pseudonymized" to
 // exercise the consent rules; this does NOT demonstrate a deidentification
-// process. No networking, SMS, model calls, or persistent storage: the
-// InMemoryDatasetEventStore holds everything in process memory and the
-// process exits without writing anything.
+// process. No networking, SMS, or model calls. The durable demonstration
+// uses a temporary local journal and removes it on completion.
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   InMemoryDatasetEventStore,
+  DurableDatasetEventStore,
   DatasetStoreError,
   buildDatasetExport,
   computeDatasetEventHash,
@@ -339,5 +342,37 @@ console.log(
   "7. bundle #1 unchanged: revocation changes subsequent export " +
     "eligibility only; it cannot recall an already produced export",
 );
+
+// ---------- 8. persist, restart, verify, export, revoke, restart ----------
+
+const journalDirectory = mkdtempSync(join(tmpdir(), "flo-dataset-demo-"));
+let durable;
+try {
+  durable = DurableDatasetEventStore.open(journalDirectory);
+  durable.appendBatch([grant, obs1, obs2]);
+  const beforeHead = durable.getJournalHead();
+  durable.close();
+  durable = DurableDatasetEventStore.open(journalDirectory, beforeHead);
+  assert.deepEqual(durable.listAll(), [grant, obs1, obs2]);
+  const recoveredBundle1 = buildDatasetExport(durable.listAll(), {
+    purpose: PURPOSE, evaluatedAt: TS.export1, caseIds: [IDS.dataCase],
+  });
+  assert.equal(recoveredBundle1.eventsNdjson, bundle1.eventsNdjson);
+  assert.equal(recoveredBundle1.manifestJson, bundle1.manifestJson);
+  durable.append(revoke);
+  const afterHead = durable.getJournalHead();
+  durable.close();
+  durable = DurableDatasetEventStore.open(journalDirectory, afterHead);
+  assert.equal(durable.size, 4);
+  const recoveredBundle2 = buildDatasetExport(durable.listAll(), {
+    purpose: PURPOSE, evaluatedAt: TS.export2, caseIds: [IDS.dataCase],
+  });
+  assert.equal(recoveredBundle2.eventsNdjson, "");
+  assert.equal(recoveredBundle2.manifest.excludedCases[0].reason, "consent_revoked");
+  console.log("8. durable journal: two reopen/replay cycles verified; consent-gated exports retain the same result");
+} finally {
+  durable?.close();
+  rmSync(journalDirectory, { recursive: true, force: true });
+}
 
 console.log("PASS");
