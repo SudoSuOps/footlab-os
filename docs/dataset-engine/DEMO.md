@@ -48,6 +48,10 @@ exits zero. Any assertion failure throws and exits nonzero:
    bytes all match the snapshot taken after stage 4). Revocation changes
    subsequent export eligibility only; it cannot recall an already
    produced export.
+8. **durable replay** — the same fictional events are appended to a temporary
+   local journal. The store closes and reopens twice, verifying the external
+   head checkpoint and the complete event chain before each export. The
+   consent grant and revocation yield the same results after recovery.
 
 All timestamps are fixed constants (no `Date.now()`), and the single
 purpose is `model_training`.
@@ -81,10 +85,10 @@ unchanged after the revocation is appended. The demo does **not**
 demonstrate recall or retraction of distributed copy artifacts; the
 export engine has no such facility.
 
-## In-memory limitation
+## Persistence in the demo
 
-`InMemoryDatasetEventStore` lives entirely in process memory: on exit the
-event log, case chains, and both export bundles are gone. Nothing is
-persisted to disk, and the demo performs no networking, SMS, or model
-calls. This demonstrates the pipeline's behavior, not durable storage — a
-production deployment needs a persistent, tamper-evident event log.
+The first seven stages use `InMemoryDatasetEventStore`. Stage 8 uses
+`DurableDatasetEventStore` in an isolated temporary directory. The journal
+is removed after the demonstration, so the demo leaves no persistent records.
+No networking, SMS, or model calls occur. See [DURABLE_STORE.md](DURABLE_STORE.md)
+for the on-disk contract, recovery procedure, and deployment limits.
