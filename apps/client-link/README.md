@@ -1,13 +1,5 @@
-# Client Link
+# FLO client check-in
 
-V1 experience:
+Mobile-first FLO time experience: six ordered views, zero to four extras, confirmed per-photo uploads, retakes, retry, review and durable receipt.
 
-1. Receive SMS.
-2. Tap secure one-time link.
-3. Confirm identity with the least-friction configured check.
-4. Follow visual capture guide for 2–4 required images.
-5. Answer a minimal check-in.
-6. Submit.
-7. See a clear completion state and what happens next.
-
-No app install. No standing password. No dashboard training.
+Run `npm run demo:capture` from the repo root, then open the printed local link. Use synthetic photos only. The local encrypted vault is not connected to the production capture service or a care-team queue. See [V2 contract](../../docs/product/FLO_TIME_V2.md).

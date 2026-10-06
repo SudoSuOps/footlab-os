@@ -1,3 +1,5 @@
+import { loadSmsCredentials } from "../packages/messaging/src/credentials.mjs";
+loadSmsCredentials();
 const required = ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_NUMBER"];
 for (const key of required) {
   if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
@@ -8,8 +10,8 @@ if (!to) {
   throw new Error("Usage: node scripts/send-test-sms.mjs +1XXXXXXXXXX");
 }
 
-const base = process.env.PUBLIC_CAPTURE_BASE_URL ?? "https://check.openfootlab.com";
-const body = `OpenFootLab: Your secure check-in is ready. ${base}/s/TEST-LINK This test link is not active. Reply STOP to opt out.`;
+const base = process.env.PUBLIC_CAPTURE_BASE_URL ?? "https://check.footlabos.com";
+const body = `FootLab: It's FLO time. Tap to start your foot check-in. ${base}/c/TEST-LINK This test link is not active. Reply STOP to opt out.`;
 
 const url = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;
 const form = new URLSearchParams({

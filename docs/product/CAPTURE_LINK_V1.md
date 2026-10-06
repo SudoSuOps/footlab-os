@@ -84,8 +84,6 @@ The manifest already records, per image:
 
 That proven ingestion path is the production source of truth. The secure-link layer wraps it rather than introducing a second media pipeline.
 
-## Demo boundary
+## V2 local prototype
 
-The repository demo previews image files locally in the browser and submits only metadata. It does **not** upload or persist image bytes.
-
-The production service is the source of truth for actual media ingestion and storage.
+The repository demo now uses the separate `flo-bilateral-v2` six-view protocol with up to four extras and actual encrypted local photo storage. See [FLO time V2](FLO_TIME_V2.md). The four-view V1 production contract above remains unchanged; the local V2 prototype is not connected to production ingestion.

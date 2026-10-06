@@ -1,0 +1,25 @@
+import { homedir } from 'node:os';
+import { join } from 'node:path';
+import { existsSync, writeFileSync, readFileSync, openSync, closeSync, fsyncSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { REPORT_TO } from '../packages/capture-links/src/report-pipeline.mjs';
+process.umask(0o077);
+const home = process.env.FLO_PILOT_HOME ?? join(homedir(), 'flo-private');
+const path = join(home, 'report-email.json');
+if (existsSync(path)) throw new Error('Report settings already exist; inspect them locally before changing.');
+const apiKey = process.env.RESEND_API_KEY, from = process.env.FLO_REPORT_FROM;
+if (!/^re_[A-Za-z0-9_-]+$/.test(apiKey ?? '') || !/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(from ?? '')) throw new Error('Provide a Resend API key and verified sender address using the hidden terminal prompts.');
+const response = await fetch('https://api.resend.com/domains', { redirect: 'error', signal: AbortSignal.timeout(15000), headers: { Authorization: `Bearer ${apiKey}` } });
+if (!response.ok) throw new Error(`Resend domain preflight failed (HTTP ${response.status}); settings not saved. The key needs domain read access for this setup check.`);
+const domains = await response.json();
+if (!domains.data?.some(d => d.name === from.split('@')[1] && d.status === 'verified')) throw new Error('Sender domain is not verified in Resend. No email sent.');
+const tags = await fetch('http://127.0.0.1:11434/api/tags', { signal: AbortSignal.timeout(15000), redirect: 'error' }).then(r => r.json());
+const model = tags.models?.find(m => m.name === 'medgemma1.5:4b');
+if (!model || !/^[a-f0-9]{64}$/.test(model.digest)) throw new Error('Install the local MedGemma vision model first.');
+const python = JSON.parse(readFileSync(join(home, 'config.json'), 'utf8')).python;
+if (spawnSync(python, [fileURLToPath(new URL('./render-flo-report.py', import.meta.url)), '--check'], { stdio: 'ignore' }).status !== 0) throw new Error('Install reportlab in the private pilot Python environment first.');
+const config = { apiKey, from, to: REPORT_TO, model: model.name, modelDigest: model.digest, python, profile: { leftGreatToeAbsent: true }, recipientAuthorization: 'personal-owner-request-2026-10-06', expiresAt: '2026-11-07T05:00:00Z' };
+const fd = openSync(path, 'wx', 0o600);
+try { writeFileSync(fd, JSON.stringify(config) + '\n'); fsyncSync(fd); } finally { closeSync(fd); }
+console.log('Private report settings saved; sender verified. No email sent.');

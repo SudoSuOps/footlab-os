@@ -11,7 +11,698 @@
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://raw.githubusercontent.com/SudoSuOps/footlab-os/feat/flo-home-checkin-hardening/apps/client-link/assets/footlabos-og-card-1200x630.png" />
     <title>FLO time · Your foot check-in</title>
-    <link rel="stylesheet" href="/client/styles.css" />
+    <style>:root {
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #1b211c;
+  background: #171d19;
+  font-synthesis: none;
+  --ink: #111516;
+  --accent: #b6ff67;
+  --muted: #68726c;
+  --line: #dfe5df;
+  --mint: #e3f5d4;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 80% 10%, #202b21 0, transparent 52%), #171d19;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+:focus-visible {
+  outline: 3px solid #b6ff67;
+  outline-offset: 4px;
+}
+.prototype {
+  background: var(--ink);
+  color: #d2ddd0;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  padding: 8px;
+}
+.masthead {
+  max-width: 1040px;
+  margin: auto;
+  padding: 26px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wordmark {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 48px;
+  letter-spacing: -5px;
+  font-weight: 850;
+  line-height: 1;
+}
+.brand-dot {
+  font-size: 11px;
+  color: var(--accent);
+  margin-left: 8px;
+  letter-spacing: 0;
+}
+.brand-caption {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.shell {
+  max-width: 980px;
+  margin: 10px auto 0;
+  padding: 0 30px;
+}
+.experience {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 24px 65px #00000020;
+  min-height: 600px;
+}
+.rail {
+  background: #1c231e;
+  border-right: 1px solid var(--line);
+  padding: 34px 25px;
+  display: flex;
+  flex-direction: column;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #4c6550;
+  margin: 0 0 16px;
+}
+.rail h2 {
+  font-size: 27px;
+  line-height: 1.16;
+  letter-spacing: -1px;
+  margin: 0 0 8px;
+}
+.rail > p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.journey {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.journey li {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  color: #68796a;
+  font-size: 13px;
+  padding: 12px 0;
+}
+.number {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #667463;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+}
+.active .number {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.done .number {
+  background: #e3f5d4;
+  color: #355823;
+  border-color: #e3f5d4;
+}
+.journey .active {
+  color: var(--ink);
+  font-weight: 750;
+}
+.rail-note {
+  margin-top: auto;
+  background: #fff9;
+  border: 1px solid #374139;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #aab7ad;
+}
+.stage {
+  padding: 38px 40px;
+  min-width: 0;
+}
+h1 {
+  font-size: 42px;
+  line-height: 1.09;
+  letter-spacing: -1.7px;
+  margin: 0 0 15px;
+}
+h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.intro {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 22px 0;
+}
+.chip {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #576c57;
+  font-size: 11px;
+  font-weight: 650;
+}
+.primary,
+.secondary,
+.camera-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 13px;
+  min-height: 52px;
+  padding: 14px 18px;
+  font-weight: 750;
+  font-size: 14px;
+  text-decoration: none;
+}
+.primary {
+  background: var(--accent);
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 8px 18px #83b44b25;
+}
+.secondary {
+  background: #f0f4ef;
+  color: #405540;
+  width: 100%;
+  border: 1px solid #dee7da;
+}
+.actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+.text-button {
+  border: 0;
+  background: none;
+  color: #546653;
+  padding: 12px 4px;
+  font-size: 13px;
+  text-decoration: underline;
+  min-height: 44px;
+}
+.step-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #68796a;
+  margin-bottom: 16px;
+}
+.progress {
+  height: 4px;
+  background: #e8eee3;
+  border-radius: 4px;
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s;
+}
+.photo-zone {
+  border: 1px dashed #bbcdb1;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #f4f8ee, #ecf3e4);
+  height: 245px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 20px;
+}
+.photo-zone img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #eef2e9;
+}
+.illustration {
+  width: 130px;
+  height: 190px;
+  filter: drop-shadow(0 12px 14px #64804c25);
+}
+.zone-label {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  color: #667d59;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.camera-label {
+  background: var(--ink);
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  min-height: 54px;
+}
+.camera-label svg {
+  width: 20px;
+  height: 20px;
+}
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+.file-input:focus-visible + .camera-label {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.upload-state {
+  margin: 13px 0 0;
+  color: #556a4c;
+  font-size: 12px;
+  min-height: 18px;
+}
+.upload-state.ready {
+  color: #24674e;
+}
+.error {
+  background: #fff0ed;
+  color: #8f362e;
+  font-size: 13px;
+  padding: 13px;
+  border-radius: 10px;
+  line-height: 1.5;
+  margin: 16px 0;
+}
+.note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #73806c;
+  margin-top: 18px;
+}
+.welcome-art {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(120deg, #edf5e3, #eef5e8);
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin: 22px 0;
+}
+.welcome-art .illustration {
+  height: 145px;
+  width: 95px;
+  transform: rotate(12deg);
+}
+.welcome-art p {
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  line-height: 1.35;
+}
+.welcome-art small {
+  display: block;
+  font-size: 11px;
+  color: #697e60;
+  font-weight: 500;
+  margin-top: 12px;
+}
+.extras-grid,
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 22px 0;
+}
+.extra {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 12px;
+  background: #f7faf3;
+}
+.extra img {
+  width: 100%;
+  height: 115px;
+  object-fit: contain;
+  border-radius: 9px;
+}
+.extra .placeholder {
+  height: 85px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: #8ca27b;
+}
+.extra .camera-label {
+  font-size: 11px;
+  padding: 9px;
+  min-height: 40px;
+  background: #e8f1de;
+  color: #496039;
+}
+.extra p {
+  font-size: 11px;
+  margin: 10px 0;
+  color: #657b57;
+}
+.review-tile {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f4f7ee;
+}
+.review-tile img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  display: block;
+}
+.review-tile button {
+  width: 100%;
+  border: 0;
+  background: white;
+  padding: 12px;
+  color: #506943;
+  font-size: 11px;
+  text-align: left;
+}
+.form-row {
+  display: grid;
+  gap: 9px;
+  margin: 23px 0;
+}
+.form-row label {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.form-row select,
+.form-row textarea {
+  border: 1px solid #cedcc3;
+  border-radius: 11px;
+  padding: 13px;
+  color: var(--ink);
+  background: white;
+  width: 100%;
+  font-size: 14px;
+}
+.receipt-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--mint);
+  color: #456b29;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  margin: 15px 0 24px;
+}
+.receipt {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 13px;
+  color: #5c7150;
+  line-height: 1.8;
+  background: #f9fbf5;
+}
+.page-footer {
+  text-align: center;
+  font-size: 12px;
+  color: #9faa9e;
+  line-height: 1.6;
+  padding: 30px 20px;
+}
+.page-footer span {
+  font-size: 10px;
+  color: #839181;
+}
+.loading {
+  text-align: center;
+  padding: 80px;
+  color: #aab7a4;
+}
+.small-progress {
+  height: 3px;
+  background: #dde8d4;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.small-progress span {
+  height: 100%;
+  display: block;
+  background: var(--accent);
+}
+[hidden] {
+  display: none !important;
+}
+@media (max-width: 700px) {
+  .masthead {
+    padding: 23px;
+  }
+  .shell {
+    padding: 0 16px;
+    margin: 0 auto;
+  }
+  .experience {
+    display: block;
+    border-radius: 23px;
+    min-height: auto;
+  }
+  .rail {
+    padding: 18px 22px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .rail h2,
+  .rail > p,
+  .rail-note {
+    display: none;
+  }
+  .rail .eyebrow {
+    margin: 0 0 11px;
+  }
+  .journey {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 0;
+  }
+  .journey li {
+    padding: 0;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .number {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+  .stage {
+    padding: 27px 24px;
+  }
+  h1 {
+    font-size: 36px;
+  }
+  .intro {
+    font-size: 14px;
+  }
+  .photo-zone {
+    height: 245px;
+  }
+  .welcome-art {
+    padding: 18px;
+  }
+  .welcome-art p {
+    font-size: 17px;
+  }
+  .page-footer {
+    padding: 24px 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+.optional {
+  color: #738466;
+  font-weight: 500;
+}
+
+/* FLO brand: sampled lime from the supplied logo, charcoal surroundings. */
+body {
+  background:
+    radial-gradient(ellipse at 80% 10%, #253323 0, transparent 52%), #171d19;
+}
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #f4f6f4;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+}
+.logo-tile {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #111516;
+  font-size: 13px;
+  letter-spacing: -0.4px;
+  font-weight: 850;
+}
+.brand-lockup {
+  display: grid;
+  gap: 4px;
+}
+.brand-lockup small {
+  font-size: 10px;
+  color: #98a59b;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.brand-caption {
+  color: #aab7ac;
+}
+.rail {
+  border-color: #334036;
+}
+.rail h2 {
+  color: #f4f6f4;
+}
+.rail > p {
+  color: #a5b1a8;
+}
+.rail .eyebrow {
+  color: var(--accent);
+}
+.journey li {
+  color: #a7b3a8;
+}
+.journey .active {
+  color: #f4f6f4;
+}
+.active .number {
+  color: #111516;
+}
+.done .number {
+  background: #33462b;
+  border-color: #526947;
+  color: #d3f3b5;
+}
+.rail-note {
+  background: #252e26;
+  color: #b9c5b8;
+}
+.primary {
+  color: #111516;
+  box-shadow: 0 8px 18px #779f3920;
+}
+h1 em {
+  color: #3c681d;
+}
+.progress span,
+.small-progress span {
+  background: #60983a;
+}
+:focus-visible {
+  outline-color: #54852f;
+}
+.file-input:focus-visible + .camera-label {
+  outline-color: #54852f;
+}
+@media (max-width: 700px) {
+  .rail {
+    background: #1c231e;
+  }
+}
+
+/* Supplied FootLabOS artwork, preserved at its original aspect ratio. */
+.masthead { margin: 22px auto; padding: 12px 22px; gap: 16px; border-radius: 20px; background: #f4f7f7; }
+.brand-image { display: block; width: 320px; max-width: 100%; height: auto; }
+.masthead .brand-caption { color: #526068; flex-shrink: 0; }
+@media (max-width: 1100px) { .masthead { margin-left: 20px; margin-right: 20px; } }
+@media (max-width: 560px) {
+  .masthead { margin: 14px 16px; padding: 10px 12px; gap: 10px; border-radius: 16px; }
+  .brand-image { width: 230px; }
+  .masthead .brand-caption { font-size: 10px; }
+}
+
+.contact-tip { margin-top: 22px; padding: 16px 18px; border: 1px solid #d6e3cb; border-radius: 16px; background: #f4f8ef; color: #35462d; }
+.contact-tip strong { display: block; font-size: 14px; }
+.contact-tip p { margin: 7px 0 9px; font-size: 13px; line-height: 1.55; }
+.contact-tip small { display: block; font-size: 12px; color: #627457; }
+
+.preview-menu{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;background:#dff0ce;padding:12px;font-size:11px}.preview-menu button{border:1px solid #bdd3a7;background:white;border-radius:8px;padding:8px;color:#355823;font-size:11px}</style>
   </head>
   <body>
     <div class="prototype">FLO · Checking your link…</div>
@@ -28,6 +719,534 @@
         concern? Contact your care team rather than waiting here.</span
       >
     </footer>
-    <script type="module" src="/client/app.js"></script>
+    <script type="module">const PROTOCOL_ID = "flo-bilateral-v2";
+const CAPTURE_STEPS = Object.freeze(
+  [
+    {
+      id: "right-top",
+      foot: "Right",
+      view: "Top",
+      hint: "Show the whole top of your right foot, from toes to ankle.",
+    },
+    {
+      id: "right-sides",
+      foot: "Right",
+      view: "Sides",
+      hint: "Take a clear side view of your right foot. Use an extra photo for the opposite side.",
+    },
+    {
+      id: "right-plantar",
+      foot: "Right",
+      view: "Bottom",
+      hint: "Show the full sole of your right foot. Get help if positioning is difficult.",
+    },
+    {
+      id: "left-top",
+      foot: "Left",
+      view: "Top",
+      hint: "Show the whole top of your left foot, from toes to ankle.",
+    },
+    {
+      id: "left-sides",
+      foot: "Left",
+      view: "Sides",
+      hint: "Take a clear side view of your left foot. Use an extra photo for the opposite side.",
+    },
+    {
+      id: "left-plantar",
+      foot: "Left",
+      view: "Bottom",
+      hint: "Show the full sole of your left foot. Get help if positioning is difficult.",
+    },
+  ].map(Object.freeze),
+);
+const EXTRA_SLOTS = Object.freeze([
+  "extra-1",
+  "extra-2",
+  "extra-3",
+  "extra-4",
+]);
+const ALL_SLOTS = Object.freeze([
+  ...CAPTURE_STEPS.map((s) => s.id),
+  ...EXTRA_SLOTS,
+]);
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+function validateCheckIn(value) {
+  if (
+    !value ||
+    !["yes", "no", "unsure"].includes(value.meaningfulChange) ||
+    typeof value.note !== "string" ||
+    value.note.length > 500
+  )
+    throw new Error(
+      "Answer the change question; notes must be 500 characters or fewer.",
+    );
+  return { meaningfulChange: value.meaningfulChange, note: value.note.trim() };
+}
+function validateCompletion(value, uploads) {
+  if (
+    !value ||
+    value.protocolId !== PROTOCOL_ID ||
+    !Array.isArray(value.slots) ||
+    value.slots.length < 6 ||
+    value.slots.length > 10 ||
+    new Set(value.slots).size !== value.slots.length ||
+    value.slots.some((s) => !ALL_SLOTS.includes(s)) ||
+    CAPTURE_STEPS.some((s) => !value.slots.includes(s.id))
+  )
+    throw new Error("Six required photos and up to four extras are needed.");
+  for (const slot of value.slots)
+    if (!uploads[slot])
+      throw new Error("Wait for every selected photo to finish uploading.");
+  return {
+    protocolId: PROTOCOL_ID,
+    slots: [...value.slots].sort(),
+    checkIn: validateCheckIn(value.checkIn),
+  };
+}
+
+
+// Isolated visual preview: no server, SMS or media transmission.
+const previewPhotos={};
+window.fetch=async(path,options={})=>{
+ let result={ok:true};
+ if(options.method==='DELETE')delete previewPhotos[path.split('/').at(-1)];
+ else if(path.endsWith('/complete')){const input=JSON.parse(options.body);result.receipt={requestId:'preview-receipt',photoCount:input.slots.length,receivedAt:new Date().toISOString()};}
+ else if(!options.method)result={state:'valid',protocolId:'flo-bilateral-v2',uploads:{},localPrototype:true};
+ return {ok:true,json:async()=>result};
+};
+window.XMLHttpRequest=class {
+ constructor(){this.upload={};}open(method,url){this.slot=url.split('/').at(-1);}setRequestHeader(){}
+ send(blob){previewPhotos[this.slot]=blob;this.status=200;this.responseText=JSON.stringify({photo:{id:'preview',mimeType:blob.type,size:blob.size}});queueMicrotask(()=>this.onload());}
+};
+
+const app = document.querySelector("#app"),
+  token = location.pathname.split("/").filter(Boolean).at(-1),
+  endpoint = "/api/capture/" + encodeURIComponent(token);
+const state = {
+  page: "welcome",
+  step: 0,
+  photos: new Map(),
+  busy: false,
+  change: "",
+  note: "",
+  error: "",
+  info: null,
+};
+const escape = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const camera =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>';
+function footArt(foot = "Right", view = "Top") {
+  return `<svg class="illustration" viewBox="0 0 130 190" fill="none" aria-hidden="true"><g ${foot === "Left" ? 'transform="translate(130 0) scale(-1 1)"' : ""}><path d="M44 170c-12-2-18-13-18-25 0-22 6-32 6-53 0-18-8-29-3-50 3-12 9-14 14-10 3-17 16-23 23-10 8-13 18-12 22 1 9-6 17 1 17 11 10 0 13 10 10 18-4 11-11 19-18 27-11 13-14 29-13 48 1 24-7 43-23 45z" fill="#dff0ce" stroke="#87aa6b" stroke-width="2"/><path d="M41 89c16 6 27 4 42-3M40 129c15 7 23 6 36 0" stroke="#b9d69e" stroke-width="2"/><circle cx="61" cy="${view === "Bottom" ? 143 : 76}" r="21" fill="#5b8c33" fill-opacity=".08" stroke="#77a94b" stroke-dasharray="3 4"/><path d="M53 76h16M61 68v16" stroke="#5b8c33" stroke-width="2"/></g></svg>`;
+}
+async function api(path, options = {}) {
+  const response = await fetch(endpoint + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "X-FLO-Request": "1",
+      ...options.headers,
+    },
+  });
+  const payload = await response.json();
+  if (!response.ok)
+    throw new Error(payload.error ?? "Connection interrupted. Please retry.");
+  return payload;
+}
+function rail() {
+  const phase =
+    state.page === "welcome"
+      ? 0
+      : state.page === "capture"
+        ? state.step < 3
+          ? 0
+          : 1
+        : state.page === "extras"
+          ? 2
+          : 3;
+  return `<aside class="rail"><div class="eyebrow">Your daily ritual</div><h2>A moment for<br>your feet.</h2><p>One photo at a time.<br>We’ll guide you through.</p><ol class="journey">${["Right", "Left", "Extras", "Review"].map((label, i) => `<li class="${i === phase ? "active" : i < phase ? "done" : ""}"><span class="number">${i < phase ? "✓" : i + 1}</span>${label}</li>`).join("")}</ol><div class="rail-note">${state.info?.privatePilot ? "A daily record, saved on your rig." : "Your check-in is a conversation with your care team."}<br><strong>You’re part of the crew.</strong></div></aside>`;
+}
+function frame(content) {
+  app.setAttribute("aria-busy", String(state.busy));
+  app.innerHTML = `<div class="experience">${rail()}<section class="stage">${content}<div id="error" class="error" role="alert" ${state.error ? "" : "hidden"}>${escape(state.error)}</div></section></div>`;
+}
+function showError(message) {
+  state.error = message;
+  const box = document.querySelector("#error");
+  if (box) {
+    box.textContent = message;
+    box.hidden = false;
+  } else render();
+}
+function clearError() {
+  state.error = "";
+  const box = document.querySelector("#error");
+  if (box) box.hidden = true;
+}
+function navigate(page, step = state.step) {
+  if (state.busy) return;
+  state.page = page;
+  state.step = step;
+  clearError();
+  render();
+  document.querySelector("h1")?.focus();
+}
+function render() {
+  if (state.page === "capture") return renderCapture();
+  if (state.page === "extras") return renderExtras();
+  if (state.page === "review") return renderReview();
+  if (state.page === "complete") return renderComplete();
+  if (state.page === "unavailable") {
+    frame(
+      `<div class="eyebrow">Let’s reconnect</div><h1>This link isn’t<br>ready to use.</h1><p class="intro">${escape(state.error)}</p><p class="note">Use your latest FLO text or contact the FootLab team for a new link.</p>`,
+    );
+    return;
+  }
+  frame(
+    `<div class="eyebrow">FootLab · Personal check-in</div><h1>It’s <em>FLO time.</em></h1><p class="intro">A little check-in. A little peace of mind.<br>Let’s take a look at your feet together.</p><div class="welcome-art"><p>Right foot. Left foot.<br>You’ve got this.<small>TOP → SIDES → BOTTOM</small></p>${footArt()}</div><div class="chips"><span class="chip">6 guided photos</span><span class="chip">Up to 4 extras</span><span class="chip">No app. No password.</span></div><button id="start" class="primary">${state.busy ? "Getting ready…" : state.photos.size ? "Continue my check-in →" : "Let’s check in →"}</button><p class="note">Sit comfortably. Keep your foot supported.<br>Ask someone to help with angles that are hard to reach.</p><aside class="contact-tip" aria-label="Recognize future FLO texts"><strong>First time with FLO?</strong><p>In your text conversation, tap the sender’s number and save it as <b>FootLabOS</b>. Future texts from that number will show the saved name.</p><small>Optional—you can check in right now.</small></aside>`,
+  );
+  document.querySelector("#start").disabled = state.busy;
+  document.querySelector("#start").onclick = async () => {
+    if (state.busy) return;
+    state.busy = true;
+    render();
+    try {
+      await api("/start", { method: "POST", body: "{}" });
+      state.busy = false;
+      const next = CAPTURE_STEPS.findIndex((s) => !state.photos.has(s.id));
+      navigate(next === -1 ? "extras" : "capture", Math.max(0, next));
+    } catch (error) {
+      state.busy = false;
+      render();
+      showError(error.message);
+    }
+  };
+}
+function bindFile(inputId, slot) {
+  document.getElementById(inputId).onchange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) selectPhoto(slot, file);
+  };
+}
+function upload(slot, blob, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", endpoint + "/photos/" + slot);
+    xhr.timeout = 120000;
+    xhr.setRequestHeader("Content-Type", blob.type);
+    xhr.setRequestHeader("X-FLO-Request", "1");
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable)
+        onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => {
+      let data;
+      try {
+        data = JSON.parse(xhr.responseText);
+      } catch {
+        return reject(new Error("Could not confirm upload. Please retry."));
+      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data.photo);
+      else reject(new Error(data.error ?? "Upload failed."));
+    };
+    xhr.onerror = () =>
+      reject(
+        new Error(
+          "Connection interrupted. Your photo is still here. Retry when ready.",
+        ),
+      );
+    xhr.ontimeout = () =>
+      reject(
+        new Error("Upload timed out. Your photo is still here. Please retry."),
+      );
+    xhr.send(blob);
+  });
+}
+async function normalizePhoto(file) {
+  if (file.size <= 0 || file.size > MAX_IMAGE_BYTES)
+    throw new Error("Choose a photo under 20 MB.");
+  if (
+    ![
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+      "image/heif",
+    ].includes(file.type)
+  )
+    throw new Error("Choose a photo file, such as JPEG or PNG.");
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    if (!image.naturalWidth || !image.naturalHeight)
+      throw new Error("Empty image");
+    // Normalize EXIF orientation and remove metadata before upload; preserve pixel dimensions.
+    if (image.naturalWidth * image.naturalHeight > 24000000)
+      throw new Error("Photo too large to prepare");
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    canvas.getContext("2d").drawImage(image, 0, 0);
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.94),
+    );
+    canvas.width = canvas.height = 0;
+    if (!blob || blob.size > MAX_IMAGE_BYTES)
+      throw new Error("Photo too large to prepare");
+    return blob;
+  } catch {
+    throw new Error(
+      "This photo could not be prepared. Try the camera or choose a JPEG/PNG version.",
+    );
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+async function selectPhoto(slot, file) {
+  if (state.busy) return;
+  clearError();
+  state.busy = true;
+  const existing = state.photos.get(slot);
+  try {
+    const blob = await normalizePhoto(file);
+    if (existing?.url?.startsWith("blob:")) URL.revokeObjectURL(existing.url);
+    state.photos.set(slot, {
+      blob,
+      url: URL.createObjectURL(blob),
+      status: "uploading",
+      progress: 0,
+    });
+    render();
+    await sendPhoto(slot);
+  } catch (error) {
+    showError(error.message);
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+async function sendPhoto(slot) {
+  const photo = state.photos.get(slot);
+  photo.status = "uploading";
+  try {
+    photo.meta = await upload(slot, photo.blob, (progress) => {
+      photo.progress = progress;
+      const label = document.getElementById("upload-" + slot);
+      if (label) label.textContent = `Uploading ${progress}%…`;
+    });
+    photo.status = "ready";
+  } catch (error) {
+    photo.status = "failed";
+    throw error;
+  }
+}
+function fileControl(id, label) {
+  return `<input class="file-input" id="${id}" type="file" accept="image/*" capture="environment"><label class="camera-label" for="${id}">${camera}${label}</label>`;
+}
+function photoStatus(slot) {
+  const photo = state.photos.get(slot);
+  return `<p id="upload-${slot}" class="upload-state ${photo?.status === "ready" ? "ready" : ""}" role="status">${photo?.status === "ready" ? "✓ Photo received" : photo?.status === "failed" ? "Upload interrupted · retry below" : photo?.status === "uploading" ? `Uploading ${photo.progress}%…` : "Ready when you are"}</p>`;
+}
+function renderCapture() {
+  const step = CAPTURE_STEPS[state.step],
+    photo = state.photos.get(step.id),
+    ready = photo?.status === "ready";
+  frame(
+    `<div class="step-meta"><span>PHOTO ${state.step + 1} OF 6</span><span>${step.foot.toUpperCase()} FOOT</span></div><div class="progress"><span style="width:${(state.step / 6) * 100}%"></span></div><h1 tabindex="-1">${step.foot} foot.<br><em>${step.view} view.</em></h1><p class="intro">${step.hint}</p><div class="photo-zone">${photo ? `<img src="${escape(photo.url)}" alt="${step.foot} foot ${step.view} selected photo">` : footArt(step.foot, step.view)}<span class="zone-label">${step.foot.toUpperCase()} · ${step.view.toUpperCase()}</span></div>${photoStatus(step.id)}<div class="actions">${fileControl("camera", photo ? "Retake photo" : "Take a photo")}<button id="next" class="primary" ${!ready || state.busy ? "disabled" : ""}>${state.step === 5 ? "Add optional photos →" : "Looks good. Next →"}</button>${photo?.status === "failed" ? '<button id="retry" class="secondary">Retry upload</button>' : ""}<button id="back" class="text-button">${state.step ? "← Previous photo" : "← Back to welcome"}</button></div>`,
+  );
+  bindFile("camera", step.id);
+  document.querySelector("#camera").disabled = state.busy;
+  document.querySelector("#next").onclick = () =>
+    navigate(
+      state.step === 5 ? "extras" : "capture",
+      Math.min(5, state.step + 1),
+    );
+  document.querySelector("#back").onclick = () =>
+    navigate(state.step ? "capture" : "welcome", Math.max(0, state.step - 1));
+  if (document.querySelector("#retry"))
+    document.querySelector("#retry").onclick = () => retryPhoto(step.id);
+}
+async function retryPhoto(slot) {
+  if (state.busy) return;
+  state.busy = true;
+  clearError();
+  render();
+  try {
+    await sendPhoto(slot);
+  } catch (error) {
+    showError(error.message);
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+async function removePhoto(slot) {
+  if (state.busy) return;
+  state.busy = true;
+  clearError();
+  render();
+  try {
+    await api("/photos/" + slot, { method: "DELETE" });
+    const p = state.photos.get(slot);
+    if (p?.url.startsWith("blob:")) URL.revokeObjectURL(p.url);
+    state.photos.delete(slot);
+  } catch (error) {
+    showError(error.message);
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+function renderExtras() {
+  const count = EXTRA_SLOTS.filter((s) => state.photos.has(s)).length;
+  frame(
+    `<div class="eyebrow">A little more detail · Optional</div><h1 tabindex="-1">Anything else<br>to <em>show us?</em></h1><p class="intro">Add up to four extra photos: the other side, a closer look, or an area your care team asked to see.</p><div class="extras-grid">${EXTRA_SLOTS.map(
+      (slot, i) => {
+        const p = state.photos.get(slot);
+        return `<div class="extra">${p ? `<img src="${escape(p.url)}" alt="Extra photo ${i + 1}">` : '<div class="placeholder" aria-hidden="true">＋</div>'}${fileControl("file-" + slot, p ? "Replace photo" : `Extra photo ${i + 1}`)}${photoStatus(slot)}${p ? `<button class="text-button remove" data-slot="${slot}">Remove</button>` : ""}${p?.status === "failed" ? `<button class="text-button retry" data-slot="${slot}">Retry upload</button>` : ""}</div>`;
+      },
+    ).join(
+      "",
+    )}</div><div class="actions"><button id="review" class="primary" ${state.busy || [...state.photos.values()].some((p) => p.status !== "ready") ? "disabled" : ""}>${count ? "Review my check-in →" : "Skip extras. Review →"}</button><button id="back" class="text-button">← Back to left foot</button></div>`,
+  );
+  EXTRA_SLOTS.forEach((slot) => {
+    bindFile("file-" + slot, slot);
+    document.getElementById("file-" + slot).disabled = state.busy;
+  });
+  document.querySelectorAll(".remove").forEach((b) => {
+    b.disabled = state.busy;
+    b.onclick = () => removePhoto(b.dataset.slot);
+  });
+  document
+    .querySelectorAll(".retry")
+    .forEach((b) => (b.onclick = () => retryPhoto(b.dataset.slot)));
+  document.querySelector("#review").onclick = () => navigate("review");
+  document.querySelector("#back").onclick = () => navigate("capture", 5);
+}
+function renderReview() {
+  const photos = [
+    ...CAPTURE_STEPS.map((s) => ({ id: s.id, label: `${s.foot} · ${s.view}` })),
+    ...EXTRA_SLOTS.filter((s) => state.photos.has(s)).map((id, i) => ({
+      id,
+      label: `Extra photo ${i + 1}`,
+    })),
+  ];
+  frame(
+    `<div class="eyebrow">One last look</div><h1 tabindex="-1">Your check-in.<br><em>Ready to send.</em></h1><p class="intro">Check your photos, then tell us how things have been.</p><div class="review-grid">${photos.map((p) => `<div class="review-tile"><img src="${escape(state.photos.get(p.id)?.url ?? "")}" alt="${escape(p.label)}"><button class="edit-photo" data-slot="${p.id}">${escape(p.label)} <span aria-hidden="true">↗</span><span class="sr-only"> Edit photo</span></button></div>`).join("")}</div><div class="form-row"><label for="change">Have you noticed a change since your last check-in?</label><select id="change"><option value="">Choose one</option><option value="no">No change noticed</option><option value="yes">Yes, I noticed a change</option><option value="unsure">I’m not sure</option></select></div><div class="form-row"><label for="note">Anything you want to share? <span class="optional">(optional)</span></label><textarea id="note" rows="3" maxlength="500" placeholder="In your own words…">${escape(state.note)}</textarea></div><button id="submit" class="primary" ${state.busy ? "disabled" : ""}>${state.busy ? "Sending your check-in…" : `Send my ${state.photos.size} photos →`}</button><p class="note">${state.info?.privatePilot ? "Your photos stay in your private FLO vault. This pilot does not notify a care team." : "Your photos go to this local prototype vault. This test does not notify a care team."}</p><button id="back" class="text-button">← Back to extra photos</button>`,
+  );
+  document.querySelector("#change").value = state.change;
+  document.querySelector("#change").onchange = (e) =>
+    (state.change = e.target.value);
+  document.querySelector("#note").oninput = (e) =>
+    (state.note = e.target.value);
+  document.querySelectorAll(".edit-photo").forEach(
+    (b) =>
+      (b.onclick = () => {
+        const index = CAPTURE_STEPS.findIndex((s) => s.id === b.dataset.slot);
+        navigate(
+          index < 0 ? "extras" : "capture",
+          index < 0 ? state.step : index,
+        );
+      }),
+  );
+  document.querySelector("#back").onclick = () => navigate("extras");
+  document.querySelector("#submit").onclick = submit;
+}
+async function submit() {
+  if (state.busy) return;
+  if (!state.change)
+    return showError("Please answer the change question before sending.");
+  state.busy = true;
+  clearError();
+  render();
+  try {
+    const data = await api("/complete", {
+      method: "POST",
+      body: JSON.stringify({
+        protocolId: PROTOCOL_ID,
+        slots: [...state.photos.keys()],
+        checkIn: { meaningfulChange: state.change, note: state.note },
+      }),
+    });
+    state.receipt = data.receipt;
+    state.page = "complete";
+    for (const p of state.photos.values())
+      if (p.url.startsWith("blob:")) URL.revokeObjectURL(p.url);
+    state.photos.clear();
+  } catch (error) {
+    showError(
+      error.message + " Your photos and answers are kept here for retry.",
+    );
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+function renderComplete() {
+  const r = state.receipt;
+  frame(
+    `<div class="receipt-icon" aria-hidden="true">✓</div><div class="eyebrow">Check-in received</div><h1 tabindex="-1">You showed up.<br><em>That matters.</em></h1><p class="intro">Your ${r.photoCount} photos and answers have been saved to ${state.info?.privatePilot ? "your private FLO vault" : "the local FLO prototype"}.</p><div class="receipt"><strong>Upload complete</strong><br>${r.photoCount} photos · ${escape(new Date(r.receivedAt).toLocaleString())}<br>Receipt ${escape(r.requestId.slice(0, 8).toUpperCase())}</div><p class="note">You can close this page. This test receipt confirms storage, not clinical review or clearance.</p>`,
+  );
+}
+async function load() {
+  try {
+    state.info = await api("");
+    document.querySelector(".prototype").textContent = state.info.privatePilot ? "PRIVATE PERSONAL PILOT · Storage receipt only" : "VISUAL PREVIEW · All receipts are simulated";
+    if (state.info.protocolId !== PROTOCOL_ID)
+      throw new Error(
+        "This link uses an earlier photo plan. Ask for a new FLO link.",
+      );
+    if (state.info.state === "completed" && state.info.receipt) {
+      state.receipt = state.info.receipt;
+      state.page = "complete";
+    } else if (state.info.state !== "valid") {
+      state.page = "unavailable";
+      state.error = `This check-in is ${state.info.state}.`;
+    } else
+      for (const [slot, meta] of Object.entries(state.info.uploads)) {
+        state.photos.set(slot, {
+          meta,
+          status: "ready",
+          url: endpoint + "/photos/" + slot,
+        });
+      }
+    render();
+  } catch (error) {
+    state.page = "unavailable";
+    state.error = error.message;
+    render();
+  } finally {
+    app.setAttribute("aria-busy", "false");
+  }
+}
+window.addEventListener("beforeunload", (e) => {
+  if (state.busy) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+load();
+
+
+const previewMenu=document.createElement('div');previewMenu.className='preview-menu';
+previewMenu.innerHTML='<strong>VISUAL PREVIEW · No uploads or SMS</strong><button id="preview-welcome">Welcome</button><button id="preview-camera">Camera step</button><button id="preview-extras">Extras</button><button id="preview-review">Review</button><button id="preview-receipt">Receipt</button>';
+document.body.prepend(previewMenu);
+const sample='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 130 190"><rect width="130" height="190" fill="#f0f6e8"/><path d="M44 170c-12-2-18-13-18-25 0-22 6-32 6-53 0-18-8-29-3-50 3-12 9-14 14-10 3-17 16-23 23-10 8-13 18-12 22 1 9-6 17 1 17 11 10 0 13 10 10 18-4 11-11 19-18 27-11 13-14 29-13 48 1 24-7 43-23 45z" fill="#dff0ce" stroke="#87aa6b" stroke-width="2"/><text x="65" y="184" text-anchor="middle" font-size="7" fill="#5c7648">SAMPLE ILLUSTRATION</text></svg>');
+function seed(){for(const s of CAPTURE_STEPS)state.photos.set(s.id,{url:sample,status:'ready',meta:{id:'preview'}});}
+document.querySelector('#preview-welcome').onclick=()=>{state.photos.clear();navigate('welcome');};
+document.querySelector('#preview-camera').onclick=()=>{state.photos.clear();navigate('capture',0);};
+document.querySelector('#preview-extras').onclick=()=>{seed();navigate('extras');};
+document.querySelector('#preview-review').onclick=()=>{seed();navigate('review');};
+document.querySelector('#preview-receipt').onclick=()=>{state.receipt={requestId:'preview-receipt',photoCount:6,receivedAt:new Date().toISOString()};navigate('complete');};
+</script>
   </body>
 </html>
