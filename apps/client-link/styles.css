@@ -683,3 +683,8 @@ h1 em {
   .brand-image { width: 230px; }
   .masthead .brand-caption { font-size: 10px; }
 }
+
+.contact-tip { margin-top: 22px; padding: 16px 18px; border: 1px solid #d6e3cb; border-radius: 16px; background: #f4f8ef; color: #35462d; }
+.contact-tip strong { display: block; font-size: 14px; }
+.contact-tip p { margin: 7px 0 9px; font-size: 13px; line-height: 1.55; }
+.contact-tip small { display: block; font-size: 12px; color: #627457; }

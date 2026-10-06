@@ -697,6 +697,11 @@ h1 em {
   .masthead .brand-caption { font-size: 10px; }
 }
 
+.contact-tip { margin-top: 22px; padding: 16px 18px; border: 1px solid #d6e3cb; border-radius: 16px; background: #f4f8ef; color: #35462d; }
+.contact-tip strong { display: block; font-size: 14px; }
+.contact-tip p { margin: 7px 0 9px; font-size: 13px; line-height: 1.55; }
+.contact-tip small { display: block; font-size: 12px; color: #627457; }
+
 .preview-menu{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;background:#dff0ce;padding:12px;font-size:11px}.preview-menu button{border:1px solid #bdd3a7;background:white;border-radius:8px;padding:8px;color:#355823;font-size:11px}</style>
   </head>
   <body>
@@ -905,7 +910,7 @@ function render() {
     return;
   }
   frame(
-    `<div class="eyebrow">FootLab · Personal check-in</div><h1>It’s <em>FLO time.</em></h1><p class="intro">A little check-in. A little peace of mind.<br>Let’s take a look at your feet together.</p><div class="welcome-art"><p>Right foot. Left foot.<br>You’ve got this.<small>TOP → SIDES → BOTTOM</small></p>${footArt()}</div><div class="chips"><span class="chip">6 guided photos</span><span class="chip">Up to 4 extras</span><span class="chip">No app. No password.</span></div><button id="start" class="primary">${state.busy ? "Getting ready…" : state.photos.size ? "Continue my check-in →" : "Let’s check in →"}</button><p class="note">Sit comfortably. Keep your foot supported.<br>Ask someone to help with angles that are hard to reach.</p>`,
+    `<div class="eyebrow">FootLab · Personal check-in</div><h1>It’s <em>FLO time.</em></h1><p class="intro">A little check-in. A little peace of mind.<br>Let’s take a look at your feet together.</p><div class="welcome-art"><p>Right foot. Left foot.<br>You’ve got this.<small>TOP → SIDES → BOTTOM</small></p>${footArt()}</div><div class="chips"><span class="chip">6 guided photos</span><span class="chip">Up to 4 extras</span><span class="chip">No app. No password.</span></div><button id="start" class="primary">${state.busy ? "Getting ready…" : state.photos.size ? "Continue my check-in →" : "Let’s check in →"}</button><p class="note">Sit comfortably. Keep your foot supported.<br>Ask someone to help with angles that are hard to reach.</p><aside class="contact-tip" aria-label="Recognize future FLO texts"><strong>First time with FLO?</strong><p>In your text conversation, tap the sender’s number and save it as <b>FootLabOS</b>. Future texts from that number will show the saved name.</p><small>Optional—you can check in right now.</small></aside>`,
   );
   document.querySelector("#start").disabled = state.busy;
   document.querySelector("#start").onclick = async () => {
