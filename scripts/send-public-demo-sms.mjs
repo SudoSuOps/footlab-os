@@ -1,6 +1,8 @@
+import { loadSmsCredentials } from "../packages/messaging/src/credentials.mjs";
 const allowed = new Set(["+16107247873", "+16103563850", "+12678724505"]);
 const to = process.argv[2];
 if (!allowed.has(to)) throw new Error("Use an explicitly authorized demo recipient number");
+loadSmsCredentials();
 for (const key of ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_NUMBER"])
   if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
 const demo = "https://defendable.tail80f341.ts.net:10000/";

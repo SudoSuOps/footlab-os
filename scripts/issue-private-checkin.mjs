@@ -2,10 +2,12 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { pilotControl } from "./pilot-control.mjs";
 import { composeFloCheckinSms } from "../packages/messaging/src/checkin-copy.mjs";
+import { loadSmsCredentials } from "../packages/messaging/src/credentials.mjs";
 
 // This pilot is deliberately restricted to the owner's authorized test phone.
 const to = process.argv[2];
 if (to !== "+15615327120") throw new Error("Personal pilot only: use the authorized owner test number");
+loadSmsCredentials();
 for (const key of ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_NUMBER"])
   if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
 if (!/^AC[0-9a-f]{32}$/i.test(process.env.TWILIO_ACCOUNT_SID)) throw new Error("Invalid Account SID");

@@ -1,3 +1,5 @@
+import { loadSmsCredentials } from "../packages/messaging/src/credentials.mjs";
+loadSmsCredentials();
 const required = ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_NUMBER"];
 for (const key of required) {
   if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
