@@ -12,3 +12,10 @@ test('form signatures bind exact public URL and all fields; unsupported formats 
   form.append('MessageSid','another');
   assert.equal(verifyTwilioFormSignature(input),false);
 });
+
+import { composeFloCheckinSms } from '../src/checkin-copy.mjs';
+test('FLO reminder uses generic care copy and an opaque HTTPS link',()=>{
+  const text=composeFloCheckinSms('https://check.footlabos.com/c/'+'a'.repeat(43));
+  assert.match(text,/It's FLO time/);assert.match(text,/Reply STOP/);assert.doesNotMatch(text,/diabet|expires today/i);
+  for(const url of ['http://example.com/c/'+'a'.repeat(43),'https://example.com/c/F001','https://example.com/c/'+'a'.repeat(43)+'?name=client'])assert.throws(()=>composeFloCheckinSms(url));
+});

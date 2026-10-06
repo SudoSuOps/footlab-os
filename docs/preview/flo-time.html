@@ -1,4 +1,130 @@
-import {
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#111e32" />
+    <meta name="color-scheme" content="light" />
+    <title>FLO time · Your foot check-in</title>
+    <link rel="stylesheet" href="/client/styles.css" />
+  </head>
+  <body>
+    <div class="prototype">VISUAL PREVIEW · All receipts are simulated</div>
+    <header class="masthead">
+      <a class="wordmark" href="#" aria-label="FLO home"
+        >flo<span class="brand-dot">●</span></a
+      ><span class="brand-caption">A little care.<br />Every day.</span>
+    </header>
+    <main id="app" class="shell" aria-busy="true">
+      <div class="loading" role="status">Getting your FLO check-in ready…</div>
+    </main>
+    <footer class="page-footer">
+      Made with care by FootLab.<br /><span
+        >FLO organizes check-ins. Your care team owns care decisions.<br />Urgent
+        concern? Contact your care team rather than waiting here.</span
+      >
+    </footer>
+    <script type="module">const PROTOCOL_ID = "flo-bilateral-v2";
+const CAPTURE_STEPS = Object.freeze(
+  [
+    {
+      id: "right-top",
+      foot: "Right",
+      view: "Top",
+      hint: "Show the whole top of your right foot, from toes to ankle.",
+    },
+    {
+      id: "right-sides",
+      foot: "Right",
+      view: "Sides",
+      hint: "Take a clear side view of your right foot. Use an extra photo for the opposite side.",
+    },
+    {
+      id: "right-plantar",
+      foot: "Right",
+      view: "Bottom",
+      hint: "Show the full sole of your right foot. Get help if positioning is difficult.",
+    },
+    {
+      id: "left-top",
+      foot: "Left",
+      view: "Top",
+      hint: "Show the whole top of your left foot, from toes to ankle.",
+    },
+    {
+      id: "left-sides",
+      foot: "Left",
+      view: "Sides",
+      hint: "Take a clear side view of your left foot. Use an extra photo for the opposite side.",
+    },
+    {
+      id: "left-plantar",
+      foot: "Left",
+      view: "Bottom",
+      hint: "Show the full sole of your left foot. Get help if positioning is difficult.",
+    },
+  ].map(Object.freeze),
+);
+const EXTRA_SLOTS = Object.freeze([
+  "extra-1",
+  "extra-2",
+  "extra-3",
+  "extra-4",
+]);
+const ALL_SLOTS = Object.freeze([
+  ...CAPTURE_STEPS.map((s) => s.id),
+  ...EXTRA_SLOTS,
+]);
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+function validateCheckIn(value) {
+  if (
+    !value ||
+    !["yes", "no", "unsure"].includes(value.meaningfulChange) ||
+    typeof value.note !== "string" ||
+    value.note.length > 500
+  )
+    throw new Error(
+      "Answer the change question; notes must be 500 characters or fewer.",
+    );
+  return { meaningfulChange: value.meaningfulChange, note: value.note.trim() };
+}
+function validateCompletion(value, uploads) {
+  if (
+    !value ||
+    value.protocolId !== PROTOCOL_ID ||
+    !Array.isArray(value.slots) ||
+    value.slots.length < 6 ||
+    value.slots.length > 10 ||
+    new Set(value.slots).size !== value.slots.length ||
+    value.slots.some((s) => !ALL_SLOTS.includes(s)) ||
+    CAPTURE_STEPS.some((s) => !value.slots.includes(s.id))
+  )
+    throw new Error("Six required photos and up to four extras are needed.");
+  for (const slot of value.slots)
+    if (!uploads[slot])
+      throw new Error("Wait for every selected photo to finish uploading.");
+  return {
+    protocolId: PROTOCOL_ID,
+    slots: [...value.slots].sort(),
+    checkIn: validateCheckIn(value.checkIn),
+  };
+}
+
+
+// Isolated visual preview: no server, SMS or media transmission.
+const previewPhotos={};
+window.fetch=async(path,options={})=>{
+ let result={ok:true};
+ if(options.method==='DELETE')delete previewPhotos[path.split('/').at(-1)];
+ else if(path.endsWith('/complete')){const input=JSON.parse(options.body);result.receipt={requestId:'preview-receipt',photoCount:input.slots.length,receivedAt:new Date().toISOString()};}
+ else if(!options.method)result={state:'valid',protocolId:'flo-bilateral-v2',uploads:{},localPrototype:true};
+ return {ok:true,json:async()=>result};
+};
+window.XMLHttpRequest=class {
+ constructor(){this.upload={};}open(method,url){this.slot=url.split('/').at(-1);}setRequestHeader(){}
+ send(blob){previewPhotos[this.slot]=blob;this.status=200;this.responseText=JSON.stringify({photo:{id:'preview',mimeType:blob.type,size:blob.size}});queueMicrotask(()=>this.onload());}
+};
+
   CAPTURE_STEPS,
   EXTRA_SLOTS,
   PROTOCOL_ID,
@@ -418,3 +544,18 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 load();
+
+
+const previewMenu=document.createElement('div');previewMenu.className='preview-menu';
+previewMenu.innerHTML='<strong>VISUAL PREVIEW · No uploads or SMS</strong><button id="preview-welcome">Welcome</button><button id="preview-camera">Camera step</button><button id="preview-extras">Extras</button><button id="preview-review">Review</button><button id="preview-receipt">Receipt</button>';
+document.body.prepend(previewMenu);
+const sample='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 130 190"><rect width="130" height="190" fill="#edf4fd"/><path d="M44 170c-12-2-18-13-18-25 0-22 6-32 6-53 0-18-8-29-3-50 3-12 9-14 14-10 3-17 16-23 23-10 8-13 18-12 22 1 9-6 17 1 17 11 10 0 13 10 10 18-4 11-11 19-18 27-11 13-14 29-13 48 1 24-7 43-23 45z" fill="#d7e7fc" stroke="#7399cb" stroke-width="2"/><text x="65" y="184" text-anchor="middle" font-size="7" fill="#54759e">SAMPLE ILLUSTRATION</text></svg>');
+function seed(){for(const s of CAPTURE_STEPS)state.photos.set(s.id,{url:sample,status:'ready',meta:{id:'preview'}});}
+document.querySelector('#preview-welcome').onclick=()=>{state.photos.clear();navigate('welcome');};
+document.querySelector('#preview-camera').onclick=()=>{state.photos.clear();navigate('capture',0);};
+document.querySelector('#preview-extras').onclick=()=>{seed();navigate('extras');};
+document.querySelector('#preview-review').onclick=()=>{seed();navigate('review');};
+document.querySelector('#preview-receipt').onclick=()=>{state.receipt={requestId:'preview-receipt',photoCount:6,receivedAt:new Date().toISOString()};navigate('complete');};
+</script>
+  </body>
+</html>

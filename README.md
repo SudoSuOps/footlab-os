@@ -57,6 +57,10 @@ V1 foundation: architecture, domain contracts, Flight Sheet model, Edge Applianc
 
 ## FLO personal prototype hardening
 
-Requires Node 24+. Run `npm test` for the dataset, capture, messaging and FLO Home protocol checks. `npm run demo:capture` serves a synthetic metadata-only demo on loopback; selected image bytes stay in the browser. `HOST=0.0.0.0 npm run demo:capture` deliberately exposes it to the LAN and must use synthetic data. It is not an Internet-facing production service.
+Requires Node 24+. Run `npm test` for the dataset, capture, messaging and FLO Home protocol checks. `npm run demo:capture` serves the V2 synthetic upload prototype on loopback; six guided photos plus up to four extras are saved to an encrypted local development vault. `HOST=0.0.0.0 npm run demo:capture` deliberately exposes it to the LAN and must use synthetic data. It is not an Internet-facing production service.
 
 `npm run demo:home` exercises the FLO Home protocol without hardware or SMS. The personal hardware target is ESP32-C6-Touch-AMOLED-2.16; see [FLO Home architecture and bring-up](docs/architecture/FLO_HOME.md). The protocol and Twilio form verifier are integration building blocks; device authentication, live callbacks and board firmware remain to be implemented.
+
+The client experience now follows **It's FLO time → right top/sides/bottom → left top/sides/bottom → optional extras → review → receipt**. See [FLO time V2](docs/product/FLO_TIME_V2.md) for the API, local storage scope and production migration boundary.
+
+[Open the click-through visual preview](docs/preview/flo-time.html) or inspect the [running-app welcome screenshot](docs/preview/flo-welcome.png). `npm run preview:client` regenerates the standalone preview; uploads and receipts in that preview are explicitly simulated. `npm run test:client` runs the browser journey when Playwright and Chromium are installed.
