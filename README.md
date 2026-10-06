@@ -54,3 +54,9 @@ docs/
 ## Status
 
 V1 foundation: architecture, domain contracts, Flight Sheet model, Edge Appliance spec, safety boundaries, operator information architecture, and pilot protocol.
+
+## FLO personal prototype hardening
+
+Requires Node 24+. Run `npm test` for the dataset, capture, messaging and FLO Home protocol checks. `npm run demo:capture` serves a synthetic metadata-only demo on loopback; selected image bytes stay in the browser. `HOST=0.0.0.0 npm run demo:capture` deliberately exposes it to the LAN and must use synthetic data. It is not an Internet-facing production service.
+
+`npm run demo:home` exercises the FLO Home protocol without hardware or SMS. The personal hardware target is ESP32-C6-Touch-AMOLED-2.16; see [FLO Home architecture and bring-up](docs/architecture/FLO_HOME.md). The protocol and Twilio form verifier are integration building blocks; device authentication, live callbacks and board firmware remain to be implemented.

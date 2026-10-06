@@ -1,3 +1,5 @@
+import { pathToFileURL } from "node:url";
+import { validateCaptureSubmission } from "../packages/capture-links/src/submission.mjs";
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { createReadStream, existsSync } from "node:fs";
 import { extname, join } from "node:path";
@@ -7,6 +9,7 @@ const PORT = Number(process.env.PORT ?? 4174);
 const ROOT = process.cwd();
 const CLIENT_DIR = join(ROOT, "apps/client-link");
 
+export function createCaptureDemo() {
 const links = new Map();
 const events = [];
 
@@ -70,11 +73,14 @@ function json(res, code, payload) {
 
 async function body(req) {
   let raw = "";
+  let size = 0;
   for await (const chunk of req) {
+    size += chunk.length;
+    if (size > 16384) { const error = new Error("Request too large"); error.status = 413; throw error; }
     raw += chunk;
-    if (raw.length > 1_000_000) throw new Error("Request too large");
   }
-  return raw ? JSON.parse(raw) : {};
+  try { return raw ? JSON.parse(raw) : {}; }
+  catch { const error = new Error("Invalid JSON"); error.status = 400; throw error; }
 }
 
 function serveFile(res, path) {
@@ -86,7 +92,10 @@ function serveFile(res, path) {
 
 const server = createServer(async (req, res) => {
   try {
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'");
+    const url = new URL(req.url, "http://localhost");
 
     if (req.method === "GET" && url.pathname === "/client/app.js") return serveFile(res, join(CLIENT_DIR, "app.js"));
     if (req.method === "GET" && url.pathname === "/client/styles.css") return serveFile(res, join(CLIENT_DIR, "styles.css"));
@@ -121,10 +130,13 @@ const server = createServer(async (req, res) => {
 
       if (req.method === "POST" && action === "complete") {
         if (!record.startedAt) return json(res, 409, { error:"Start the check-in before submitting" });
-        const payload = await body(req);
-        if (!Array.isArray(payload.captures) || payload.captures.length !== 4) {
-          return json(res, 400, { error:"Four capture records are required" });
-        }
+        if (!/^application\/json(?:;|$)/i.test(req.headers["content-type"] ?? "")) return json(res, 415, { error:"JSON required" });
+        const raw = await body(req);
+        let payload;
+        try { payload = validateCaptureSubmission(raw); }
+        catch (error) { return json(res, 400, { error:error.message }); }
+        // Another request may have completed while this body was being read.
+        if (state(record) !== "valid") return json(res, 410, { error:"Capture link is no longer available" });
         record.completedAt = new Date().toISOString();
         events.push(event(record.clientId, "capture_completed", {
           requestId:record.requestId,
@@ -142,19 +154,20 @@ const server = createServer(async (req, res) => {
 
     return json(res, 404, { error:"Not found" });
   } catch (error) {
-    console.error(error);
-    return json(res, 500, { error:"Internal server error" });
+    return json(res, error.status ?? 500, { error:error.status ? error.message : "Internal server error" });
   }
 });
 
-const token = issueDemoLink();
-server.listen(PORT, () => {
-  console.log("");
-  console.log("FootLabOS capture demo");
-  console.log("----------------------");
-  console.log(`Open: http://localhost:${PORT}/c/${token}`);
-  console.log(`Events: http://localhost:${PORT}/api/demo/events`);
-  console.log("");
-  console.log("For a phone on the same LAN, replace localhost with this machine's LAN IP.");
-  console.log("Demo note: selected image bytes remain in the browser; only metadata is submitted.");
-});
+return { server, issueDemoLink, events };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const { server, issueDemoLink } = createCaptureDemo();
+  const token = issueDemoLink();
+  const host = process.env.HOST ?? "127.0.0.1";
+  server.listen(PORT, host, () => {
+    console.log(`FLO synthetic capture demo: http://${host}:${PORT}/c/${token}`);
+    console.log("Photo bytes stay in the browser. Metadata only; no clinical review submission.");
+    console.log("For an intentional LAN demo, set HOST=0.0.0.0; use synthetic data only.");
+  });
+}

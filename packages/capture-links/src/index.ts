@@ -29,6 +29,9 @@ export function issueCaptureLink(input: {
 }): IssuedCaptureLink {
   const issuedAt = input.issuedAt ?? new Date();
   const ttlMinutes = input.ttlMinutes ?? 24 * 60;
+  if (!Number.isFinite(issuedAt.getTime()) || !Number.isFinite(ttlMinutes) || ttlMinutes <= 0 || ttlMinutes > 10080) {
+    throw new Error("Invalid capture link lifetime");
+  }
   const rawToken = randomBytes(32).toString("base64url");
 
   return {
@@ -56,6 +59,7 @@ export function captureLinkState(
 ): "valid" | "expired" | "completed" | "revoked" {
   if (record.revokedAt) return "revoked";
   if (record.completedAt) return "completed";
-  if (new Date(record.expiresAt).getTime() <= now.getTime()) return "expired";
+  const expiry = new Date(record.expiresAt).getTime();
+  if (!Number.isFinite(expiry) || !Number.isFinite(now.getTime()) || expiry <= now.getTime()) return "expired";
   return "valid";
 }

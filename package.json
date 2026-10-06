@@ -7,6 +7,12 @@
     "check": "node scripts/check-foundation.mjs",
     "demo:capture": "node scripts/demo-capture-server.mjs",
     "demo:dataset": "node --experimental-strip-types scripts/demo-dataset.mjs",
-    "test:dataset": "node --experimental-strip-types --test packages/dataset-engine/test/*.test.mjs"
+    "test:dataset": "node --experimental-strip-types --test packages/dataset-engine/test/*.test.mjs",
+    "test": "node --test packages/*/test/*.test.mjs",
+    "demo:home": "node scripts/demo-home.mjs"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=24"
   }
 }

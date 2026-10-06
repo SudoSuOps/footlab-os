@@ -8,7 +8,7 @@ Twilio is an outbound transport for a generic FootLabOS service notification. It
 
 ```text
 OpenFootLab: Your secure check-in is ready.
-https://check.openfootlab.com/s/<opaque-token>
+https://check.footlabos.com/c/<opaque-token>
 Link expires today. Reply STOP to opt out.
 ```
 
@@ -70,3 +70,7 @@ Failures append `sms_failed` and appear in the Operator TODAY queue.
 Production should accept Twilio delivery callbacks and validate the provider signature before appending delivery-state events.
 
 Do not trust arbitrary public POSTs to the webhook endpoint.
+
+## Form webhook verification helper
+
+`packages/messaging/src/webhook.mjs` verifies Twilio form POST signatures with HMAC-SHA1, alphabetically sorted parameters and constant-time comparison. Reference: https://www.twilio.com/docs/usage/security . Supply the exact configured public HTTPS URL including its query; do not derive it from incoming Host/forwarded headers. Verify before mutating delivery state. Duplicate form keys, JSON body signatures and WebSocket signatures are unsupported and rejected. Use the official SDK for those formats. This helper is tested but is not wired into a deployed callback handler in this repository.
