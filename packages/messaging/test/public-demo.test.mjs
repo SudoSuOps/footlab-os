@@ -16,7 +16,7 @@ test("public demo sends only authorized recipients and only public sample link (
       }
       throw Error('Unexpected network request blocked');
     };`);
-    for (const to of ["+16107247873", "+16103563850", "+15615327120"]) {
+    for (const to of ["+16107247873", "+16103563850", "+12678724505", "+15615327120"]) {
       const result = spawnSync(process.execPath, ["--import", mock, "scripts/send-public-demo-sms.mjs", to], { encoding: "utf8", env: { ...process.env, TWILIO_ACCOUNT_SID: "ACsynthetic", TWILIO_AUTH_TOKEN: "synthetic", TWILIO_FROM_NUMBER: "+15615818015", DEMO_EXPECTED_TO: to } });
       assert.equal(result.status, to === "+15615327120" ? 1 : 0, result.stderr);
     }
