@@ -672,3 +672,14 @@ h1 em {
     background: #1c231e;
   }
 }
+
+/* Supplied FootLabOS artwork, preserved at its original aspect ratio. */
+.masthead { margin: 22px auto; padding: 12px 22px; gap: 16px; border-radius: 20px; background: #f4f7f7; }
+.brand-image { display: block; width: 320px; max-width: 100%; height: auto; }
+.masthead .brand-caption { color: #526068; flex-shrink: 0; }
+@media (max-width: 1100px) { .masthead { margin-left: 20px; margin-right: 20px; } }
+@media (max-width: 560px) {
+  .masthead { margin: 14px 16px; padding: 10px 12px; gap: 10px; border-radius: 16px; }
+  .brand-image { width: 230px; }
+  .masthead .brand-caption { font-size: 10px; }
+}
