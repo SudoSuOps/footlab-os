@@ -22,12 +22,17 @@ function quote(value) {
   if (/[\n\r%]/.test(value)) throw new Error('Unsupported service path.');
   return '"' + value.replaceAll('\\', '\\\\').replaceAll('"', '\\"') + '"';
 }
-const service = `[Unit]\nDescription=FLO personal daily SMS (owner only)\nAfter=flo-private-pilot.service\nRequires=flo-private-pilot.service\n\n[Service]\nType=oneshot\nWorkingDirectory=${quote(app)}\nEnvironment=${quote('FLO_PILOT_HOME=' + home)}\nExecStart=${quote(process.execPath)} ${quote(join(app, 'scripts/run-personal-daily.mjs'))}\nUMask=0077\nNoNewPrivileges=true\nTimeoutStartSec=90\nRestart=no\n`;
+quote(app); // Validate path; WorkingDirectory takes a path, not an ExecStart-style quoted word.
+const service = `[Unit]\nDescription=FLO personal daily SMS (owner only)\nAfter=flo-private-pilot.service\nRequires=flo-private-pilot.service\n\n[Service]\nType=oneshot\nWorkingDirectory=${app}\nEnvironment=${quote('FLO_PILOT_HOME=' + home)}\nExecStart=${quote(process.execPath)} ${quote(join(app, 'scripts/run-personal-daily.mjs'))}\nUMask=0077\nNoNewPrivileges=true\nTimeoutStartSec=90\nRestart=no\n`;
+const legacyService = service.replace(`WorkingDirectory=${app}\n`, `WorkingDirectory=${quote(app)}\n`);
 const root = join(homedir(), '.config/systemd/user');
 mkdirSync(root, { recursive: true, mode: 0o700 });
 for (const [name, content] of [['flo-personal-daily.service', service], ['flo-personal-daily.timer', timerUnit()]]) {
   const path = join(root, name);
-  if (existsSync(path) && readFileSync(path, 'utf8') !== content) throw new Error('Existing FLO schedule differs; refusing to overwrite.');
+  if (existsSync(path)) {
+    const existing = readFileSync(path, 'utf8');
+    if (existing !== content && !(name === 'flo-personal-daily.service' && existing === legacyService)) throw new Error('Existing FLO schedule differs; refusing to overwrite.');
+  }
   writeFileSync(path, content, { mode: 0o600 });
 }
 execFileSync('systemd-analyze', ['verify', join(root, 'flo-personal-daily.service'), join(root, 'flo-personal-daily.timer')], { stdio: 'inherit' });
