@@ -1,3 +1,4 @@
+import { pathToFileURL } from "node:url";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { mkdtempSync, rmSync, mkdirSync } from "node:fs";
@@ -138,6 +139,18 @@ try {
     demo.events.filter((e) => e.type === "capture_completed").length,
     1,
   );
+  assert.deepEqual(errors, []);
+  await page.goto(
+    pathToFileURL(join(process.cwd(), "docs/preview/flo-time.html")).href,
+  );
+  await page.getByRole("button", { name: "Let’s check in →" }).waitFor();
+  await page.getByRole("button", { name: "Camera step", exact: true }).click();
+  await page.getByRole("heading", { name: "Right foot. Top view." }).waitFor();
+  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await page
+    .getByRole("heading", { name: "Your check-in. Ready to send." })
+    .waitFor();
+  assert.equal(await page.locator(".review-tile").count(), 6);
   assert.deepEqual(errors, []);
   console.log(
     "PASS: mobile ordered flow, upload retry, 4 extras, removal, review, completion retry, durable receipt, no horizontal overflow or JS errors.",
