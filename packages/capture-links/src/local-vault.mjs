@@ -12,15 +12,21 @@ import {
   writeFileSync,
   renameSync,
   unlinkSync,
+  openSync,
+  closeSync,
+  fsyncSync,
+  statSync,
 } from "node:fs";
 import { join } from "node:path";
 import { MAX_IMAGE_BYTES } from "./protocol.mjs";
 
 // Personal development vault only. Single process; a deployed Edge supplies managed keys.
-export function openLocalVault(root) {
+export function openLocalVault(root, { keyPath: externalKeyPath } = {}) {
   mkdirSync(root, { recursive: true, mode: 0o700 });
-  const keyPath = join(root, "local.key");
-  if (!existsSync(keyPath))
+  const keyPath = externalKeyPath ?? join(root, "local.key");
+  if (externalKeyPath && (!existsSync(keyPath) || (statSync(keyPath).mode & 0o077)))
+    throw new Error("Pilot vault key must exist and be private (mode 600)");
+  if (!externalKeyPath && !existsSync(keyPath))
     writeFileSync(keyPath, randomBytes(32), { mode: 0o600, flag: "wx" });
   const key = readFileSync(keyPath);
   if (key.length !== 32) throw new Error("Invalid vault key");
@@ -39,7 +45,11 @@ export function openLocalVault(root) {
     const tmp = path + "." + randomUUID() + ".tmp";
     try {
       writeFileSync(tmp, seal(bytes), { mode: 0o600, flag: "wx" });
+      const fd = openSync(tmp, "r");
+      try { fsyncSync(fd); } finally { closeSync(fd); }
       renameSync(tmp, path);
+      const directory = openSync(root, "r");
+      try { fsyncSync(directory); } finally { closeSync(directory); }
     } finally {
       if (existsSync(tmp)) unlinkSync(tmp);
     }

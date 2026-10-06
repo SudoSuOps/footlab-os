@@ -49,6 +49,8 @@ No existing production Caddy routes, PostgreSQL records or media pipeline were m
 
 ## Text transport
 
+The explicitly separate [personal private pilot](../pilot/PRIVATE_FLO_V2.md) can issue one-hour V2 links to the owner's authorized test phone through Twilio and serve the UI through private Tailscale HTTPS. It adds full image decoding, a separate key file, private operator control and persisted submission audit. It does not connect the public V1 backend, NAS ingestion or clinical review. Follow its isolated setup rather than exposing the demo server publicly.
+
 `composeFloCheckinSms` supplies generic V2 reminder copy with an HTTPS opaque URL and STOP language. It does not send a message. `send-test-sms.mjs` remains an explicitly invoked live transport test with an inactive TEST-LINK, now branded FLO and using `/c/`. No live SMS was sent during development.
 
 ## Validation

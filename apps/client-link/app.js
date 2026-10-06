@@ -55,7 +55,7 @@ function rail() {
         : state.page === "extras"
           ? 2
           : 3;
-  return `<aside class="rail"><div class="eyebrow">Your daily ritual</div><h2>A moment for<br>your feet.</h2><p>One photo at a time.<br>We’ll guide you through.</p><ol class="journey">${["Right", "Left", "Extras", "Review"].map((label, i) => `<li class="${i === phase ? "active" : i < phase ? "done" : ""}"><span class="number">${i < phase ? "✓" : i + 1}</span>${label}</li>`).join("")}</ol><div class="rail-note">Your check-in is a conversation with your care team.<br><strong>You’re part of the crew.</strong></div></aside>`;
+  return `<aside class="rail"><div class="eyebrow">Your daily ritual</div><h2>A moment for<br>your feet.</h2><p>One photo at a time.<br>We’ll guide you through.</p><ol class="journey">${["Right", "Left", "Extras", "Review"].map((label, i) => `<li class="${i === phase ? "active" : i < phase ? "done" : ""}"><span class="number">${i < phase ? "✓" : i + 1}</span>${label}</li>`).join("")}</ol><div class="rail-note">${state.info?.privatePilot ? "A daily record, saved on your rig." : "Your check-in is a conversation with your care team."}<br><strong>You’re part of the crew.</strong></div></aside>`;
 }
 function frame(content) {
   app.setAttribute("aria-busy", String(state.busy));
@@ -325,7 +325,7 @@ function renderReview() {
     })),
   ];
   frame(
-    `<div class="eyebrow">One last look</div><h1 tabindex="-1">Your check-in.<br><em>Ready to send.</em></h1><p class="intro">Check your photos, then tell us how things have been.</p><div class="review-grid">${photos.map((p) => `<div class="review-tile"><img src="${escape(state.photos.get(p.id)?.url ?? "")}" alt="${escape(p.label)}"><button class="edit-photo" data-slot="${p.id}">${escape(p.label)} <span aria-hidden="true">↗</span><span class="sr-only"> Edit photo</span></button></div>`).join("")}</div><div class="form-row"><label for="change">Have you noticed a change since your last check-in?</label><select id="change"><option value="">Choose one</option><option value="no">No change noticed</option><option value="yes">Yes, I noticed a change</option><option value="unsure">I’m not sure</option></select></div><div class="form-row"><label for="note">Anything you want to share? <span class="optional">(optional)</span></label><textarea id="note" rows="3" maxlength="500" placeholder="In your own words…">${escape(state.note)}</textarea></div><button id="submit" class="primary" ${state.busy ? "disabled" : ""}>${state.busy ? "Sending your check-in…" : `Send my ${state.photos.size} photos →`}</button><p class="note">Your photos go to this local prototype vault. This test does not notify a care team.</p><button id="back" class="text-button">← Back to extra photos</button>`,
+    `<div class="eyebrow">One last look</div><h1 tabindex="-1">Your check-in.<br><em>Ready to send.</em></h1><p class="intro">Check your photos, then tell us how things have been.</p><div class="review-grid">${photos.map((p) => `<div class="review-tile"><img src="${escape(state.photos.get(p.id)?.url ?? "")}" alt="${escape(p.label)}"><button class="edit-photo" data-slot="${p.id}">${escape(p.label)} <span aria-hidden="true">↗</span><span class="sr-only"> Edit photo</span></button></div>`).join("")}</div><div class="form-row"><label for="change">Have you noticed a change since your last check-in?</label><select id="change"><option value="">Choose one</option><option value="no">No change noticed</option><option value="yes">Yes, I noticed a change</option><option value="unsure">I’m not sure</option></select></div><div class="form-row"><label for="note">Anything you want to share? <span class="optional">(optional)</span></label><textarea id="note" rows="3" maxlength="500" placeholder="In your own words…">${escape(state.note)}</textarea></div><button id="submit" class="primary" ${state.busy ? "disabled" : ""}>${state.busy ? "Sending your check-in…" : `Send my ${state.photos.size} photos →`}</button><p class="note">${state.info?.privatePilot ? "Your photos stay in your private FLO vault. This pilot does not notify a care team." : "Your photos go to this local prototype vault. This test does not notify a care team."}</p><button id="back" class="text-button">← Back to extra photos</button>`,
   );
   document.querySelector("#change").value = state.change;
   document.querySelector("#change").onchange = (e) =>
@@ -378,12 +378,13 @@ async function submit() {
 function renderComplete() {
   const r = state.receipt;
   frame(
-    `<div class="receipt-icon" aria-hidden="true">✓</div><div class="eyebrow">Check-in received</div><h1 tabindex="-1">You showed up.<br><em>That matters.</em></h1><p class="intro">Your ${r.photoCount} photos and answers have been saved to the local FLO prototype.</p><div class="receipt"><strong>Upload complete</strong><br>${r.photoCount} photos · ${escape(new Date(r.receivedAt).toLocaleString())}<br>Receipt ${escape(r.requestId.slice(0, 8).toUpperCase())}</div><p class="note">You can close this page. This test receipt confirms storage, not clinical review or clearance.</p>`,
+    `<div class="receipt-icon" aria-hidden="true">✓</div><div class="eyebrow">Check-in received</div><h1 tabindex="-1">You showed up.<br><em>That matters.</em></h1><p class="intro">Your ${r.photoCount} photos and answers have been saved to ${state.info?.privatePilot ? "your private FLO vault" : "the local FLO prototype"}.</p><div class="receipt"><strong>Upload complete</strong><br>${r.photoCount} photos · ${escape(new Date(r.receivedAt).toLocaleString())}<br>Receipt ${escape(r.requestId.slice(0, 8).toUpperCase())}</div><p class="note">You can close this page. This test receipt confirms storage, not clinical review or clearance.</p>`,
   );
 }
 async function load() {
   try {
     state.info = await api("");
+    document.querySelector(".prototype").textContent = state.info.privatePilot ? "PRIVATE PERSONAL PILOT · Storage receipt only" : "LOCAL PROTOTYPE · Use test photos";
     if (state.info.protocolId !== PROTOCOL_ID)
       throw new Error(
         "This link uses an earlier photo plan. Ask for a new FLO link.",

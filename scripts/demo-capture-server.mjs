@@ -20,8 +20,14 @@ const failure = (status, message) =>
   Object.assign(new Error(message), { status });
 export function createCaptureDemo({
   vaultDir = join(process.cwd(), ".flo-local-vault"),
+  keyPath,
+  pilotOrigin,
+  validateImage,
 } = {}) {
-  const vault = openLocalVault(vaultDir),
+  if (pilotOrigin && !/^https:\/\/[a-z0-9.-]+\.ts\.net(?::\d+)?$/.test(pilotOrigin))
+    throw new Error("Private pilot requires an HTTPS Tailscale origin");
+  if (pilotOrigin && !keyPath) throw new Error("Private pilot requires a separate vault key");
+  const vault = openLocalVault(vaultDir, { keyPath }),
     saved = vault.load(),
     links = new Map(saved.links.map((r) => [r.tokenHash, r])),
     events = saved.events;
@@ -40,16 +46,17 @@ export function createCaptureDemo({
       clientId: record.clientId,
       occurredAt: new Date().toISOString(),
       type,
-      source: "local-capture-prototype",
+      source: pilotOrigin ? "private-personal-pilot" : "local-capture-prototype",
       payload,
     });
   }
   function issueDemoLink() {
+    if (pilotOrigin && links.size >= 32) throw new Error("Pilot session limit reached; archive the vault before issuing more links");
     const token = randomBytes(32).toString("base64url"),
       now = new Date();
     const record = {
       requestId: randomUUID(),
-      clientId: "F-DEMO-001",
+      clientId: pilotOrigin ? "F-PERSONAL-001" : "F-DEMO-001",
       tokenHash: hashToken(token),
       issuedAt: now.toISOString(),
       expiresAt: new Date(now.getTime() + 3600000).toISOString(),
@@ -58,8 +65,26 @@ export function createCaptureDemo({
     };
     links.set(record.tokenHash, record);
     event(record, "capture_requested");
-    persist();
+    try { persist(); } catch (error) { links.delete(record.tokenHash); events.pop(); throw error; }
     return token;
+  }
+  function revokeLink(token) {
+    const record = links.get(hashToken(token));
+    if (!record || record.completedAt) throw new Error("Cannot revoke this link");
+    const previous = record.revokedAt;
+    record.revokedAt = new Date().toISOString();
+    try { persist(); } catch (error) { record.revokedAt = previous; throw error; }
+  }
+  function recordDelivery(token, delivery) {
+    const record = links.get(hashToken(token));
+    if (!record || !/^SM[0-9a-f]{32}$/i.test(delivery.sid ?? "") || !["accepted", "queued", "sending", "sent", "delivered"].includes(delivery.status))
+      throw new Error("Invalid delivery record");
+    const previous = record.delivery;
+    record.delivery = { sid: delivery.sid, status: delivery.status, recordedAt: new Date().toISOString() };
+    try { persist(); } catch (error) { record.delivery = previous; throw error; }
+  }
+  function listSessions() {
+    return [...links.values()].map((r) => ({ requestId: r.requestId, state: state(r), issuedAt: r.issuedAt, photoCount: Object.keys(r.uploads).length, receipt: r.receipt ?? null, delivery: r.delivery ?? null }));
   }
   function json(res, status, payload) {
     res.writeHead(status, {
@@ -101,6 +126,7 @@ export function createCaptureDemo({
     });
     createReadStream(path).pipe(res);
   }
+  let requestWindow = Date.now(), requestCount = 0;
   const server = createServer(async (req, res) => {
     try {
       res.setHeader("Referrer-Policy", "no-referrer");
@@ -111,6 +137,16 @@ export function createCaptureDemo({
         "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
       );
       const url = new URL(req.url, "http://localhost");
+      if (pilotOrigin) {
+        if (Date.now() - requestWindow > 60000) { requestWindow = Date.now(); requestCount = 0; }
+        if (++requestCount > 240) { res.setHeader("Retry-After", "60"); throw failure(429, "Please wait a minute before retrying"); }
+        if (req.headers.host !== new URL(pilotOrigin).host && req.headers.host !== "127.0.0.1:4175")
+          throw failure(403, "Unknown host");
+        if (!["GET", "HEAD"].includes(req.method) && req.headers.origin !== pilotOrigin)
+          throw failure(403, "Use your FLO link to make this request");
+      }
+      if (req.method === "GET" && url.pathname === "/healthz")
+        return json(res, 200, { ok: true, protocolId: PROTOCOL_ID, mode: pilotOrigin ? "private-pilot" : "demo" });
       if (
         req.method === "GET" &&
         ["/client/app.js", "/client/styles.css"].includes(url.pathname)
@@ -143,7 +179,8 @@ export function createCaptureDemo({
           steps: CAPTURE_STEPS,
           uploads: record.uploads,
           receipt: record.receipt ?? null,
-          localPrototype: true,
+          localPrototype: !pilotOrigin,
+          privatePilot: Boolean(pilotOrigin),
         });
       if (req.method !== "GET" && req.headers["x-flo-request"] !== "1")
         throw failure(403, "FLO request header required");
@@ -193,6 +230,10 @@ export function createCaptureDemo({
         }
         if (req.method === "PUT") {
           const bytes = await body(req, MAX_IMAGE_BYTES);
+          if (validateImage) {
+            try { await validateImage(bytes); }
+            catch { throw failure(400, "Photo could not be decoded. Choose a JPEG or PNG and retry."); }
+          }
           if (state(record) !== "valid")
             throw failure(410, "This check-in is no longer available.");
           let photo;
@@ -253,7 +294,8 @@ export function createCaptureDemo({
         record.checkIn = completion.checkIn;
         event(record, "capture_completed", {
           ...record.receipt,
-          localPrototype: true,
+          localPrototype: !pilotOrigin,
+          privatePilot: Boolean(pilotOrigin),
         });
         try {
           persist();
@@ -278,7 +320,7 @@ export function createCaptureDemo({
   });
   server.requestTimeout = 120000;
   server.headersTimeout = 15000;
-  return { server, issueDemoLink, events };
+  return { server, issueDemoLink, revokeLink, recordDelivery, listSessions, events };
 }
 if (
   process.argv[1] &&
